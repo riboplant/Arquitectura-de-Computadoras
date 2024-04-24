@@ -1,0 +1,54 @@
+1: int foo(){
+    int numero;
+}
+Al solo declarar y nunca asignar ni evaluar ni nada a la variable, ni siquiera pide el espacio al stack para guardarla.
+
+
+2: int foo() {
+int numero = 21;
+}
+En este caso primero declara la variable, reservandole un espacio en el stack (toma 16 bytes)
+y luego realiza la operacion de asignarle el valor como int 32 bits de 21.
+
+
+3: int numero;
+int foo() {
+numero = 21;
+}
+Se declara una etiqueta numero y luego en la funcion la instruccion busca asignarle a esa etiqueta el valor 21.
+Se declara a numero con sus 4 bytes de espacio y se le asigna el valor 32 bits de 21.
+Pareceria que se lo trata como un objeto, el cual tiene campos.
+
+
+4: int foo() {
+static int numero = 21;
+}
+La funcion no tiene implicancia alguna. Luego le sigue la seccion de .data la cual tiene una etiqueta numero
+la cual senala a un long con valor 21, nuevamente parece que se trata de un objeto.
+Cabe aclarar que al ser declarada como estatica dentro de la funcion, al igual que el caso 7 donde es declarada
+por fuera, no se trata de una variable global.
+
+
+5: extern int numero;
+int foo() {
+numero = 10;
+}
+En este caso al indicarle que el entero numero es una variable externa, no la declara en el stack, si no que asume
+que le van a pasar una referencia, la funcion busca la referencia y le asigna el valor de 10.
+
+
+6: int numero = 21;
+int bar() {
+numero = 30;
+}
+Similar al caso 3, pero al declarar la etiqueta numero en la seccion .data se le asigna un long de valor 21
+por default, luego dentro de la funcion se llama a la referencia (etiqueta) y se le asigna el valor de 30.
+Al tratarse de una variable global, se le asigna la caracteristica en el assembly
+
+
+7: static int numero = 10;
+int foo() {
+numero = 20;
+}
+Al tratarse de una variable estatica no le asignan la caracteristica de global, se declara fuera de la funcion
+la etiqueta de numero en la seccion .data y la funcion accede a su identificador para asignarle el valor 20.

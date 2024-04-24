@@ -1,0 +1,41 @@
+1: int array1(){
+    int array[20];
+}
+Se toma lugar en el stack para todas las posiciones del arreglo, nunca se accede.
+
+
+2: int array2(){
+    int array[20] = {0};
+}
+Similar al caso anterior pero se agregan instrucciones para inicializar todo en el valor selecto.
+
+
+3: int array3(){
+    int array[20];
+    array[10] = 5;
+}
+Igual al caso 1 pero con la diferencia que se agrega una unica instruccion: mov	DWORD PTR -52[ebp], 5
+para asignar a la posicion 10 el valor 5, directamente llamando, conociendo su ubicacion en el stack.
+
+
+4: int array4(){
+    int array[20] = {0};
+    array[10] = 5;
+}
+Igual al 2, con la misma diferencia entre el 3 y el 1.
+
+
+5: int array5(){
+    static int array[20];
+}
+La funcion nuevamente no hace nada, se declara una zona luego que es donde esta el arreglo.
+En realidad se selecciona un sector entero a tomar para el arreglo que por default esta en 0 para que sea
+la posicion del arreglo, luego cualquier valor (seccion/indice) dentro de este tendra valor 0.
+
+
+6: int array6(){
+    static int array[20] = {0};
+}
+Literalmente igual al caso anterior, ya que por defecto las variables estaticas toman el sector con 0s automaticamente.
+Cuando lo hago igual pero inicializando en 100, aparecen lineas nuevas para declarar que la zona donde esta el arreglo
+estatico, inicializa con el valor long 100.

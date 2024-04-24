@@ -1,0 +1,12 @@
+Ej1: imprime los argumentos, hecho en assembly
+Ej2: igual al 1 pero en c, el .s lo pasa a asm para compararlo al anterior
+Ej3: programa en C que llama a funcion en asm sin parametros
+Ej3b: programa en C que llama a funcion en asm con 3 parametros (mas util)
+Ej4: Una funcion en C, se toma el generado asm por el compilador y se preguntan cosas importantes
+Ej5: funcion recursiva en c, la paso a asm y en fotos tengo el debuggeo paso a paso
+Ej5b: programa en C que llama a funcion en asm sin parametros para pedirle un valor
+Ej6: 7 formas distintas de declarar variables en C y como se traduce a su assembly
+Ej7: 6 formas distintas de declarar arreglos en C y como se traduce a su assembly
+Ej8: llamando a main desde un asm, pasandole los parametros argc, argv. compilando c para que main no tenga _start.
+Ej9: libreria de funciones de C en asm, no terminada
+Ej10: cpuid de asm en C (Tengo que terminarlo)

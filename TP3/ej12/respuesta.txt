@@ -1,0 +1,13 @@
+Deduzca cómo se pasan las estructuras entre funciones, ¿Qué diferencia hay entre
+pasar una estructura por referencia o por copia? ¿Cómo es el retorno?
+
+Pasar una estructura por referencia es pasarle la direccion donde esta se encuentra, entonces solo se envia un valor
+del tamano de la direccion. La desventaja es que la funcion puede modificar la estructura. Pasar por copia es
+pasar uno a uno los bits a memoria y llamar a la funcion, es mucho mas complejo pero asegura la integridad de los
+datos originales.
+Como vimos en PI, las funciones pasan por copia los parametros para asegurar que los datos no sean modificados por la funcion
+es de esta forma que la unica manera es pasar un puntero a la variable, que en realidad se envia una copia de puntero a 
+variable con el valor copiado que es la direccion al dato original.
+Como en el retorno la funcion lo deja como encontro al stack, de limpiarlo que es la parte complicada se encarga la funcion 
+que llamo a la sagunda, sabiendo la cantidad de datos que envio y si este fue el caso que se enviaron los datos por stack.
+Igualmente si se paso una referencia es siempre la misma limpieza.

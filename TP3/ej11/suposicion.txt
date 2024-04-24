@@ -1,0 +1,29 @@
+crea el stackframe, como tiene 1 argumento, lo carga del stack a eax,
+hace primero la comparacion con 0 y luego con 1, pero en ambos casos devuelve el mismo valor
+si no es ninguno de estos entonces toma espacio en el stack para 2 variables que seran fibonacci(i-1) y
+fibonacci(i-2). Luego para llamar a si misma pushea i-1 y hace call a fibonacci. Esto vuelve a crear el stack frame y asi
+sucesivamente hasta que en algun caso vale 0 o 1. En ese momento carga a eax el valor, desarma el stack frame y
+llama a ret. Luego cuando va volviendo hacia atras, carga el valor de eax en el lugar designado en el stack
+para luego volver a llamar a fibonacci(i-2), luego de hacer lo mismo esta vez ademas de guardarlo, lo carga nuevamente 
+en eax por no estar optimizado y le suma el otro valor guardado, quedando la suma de ambos en eax, para nuevamente
+desarmar el stack frame y hacer ret. Asi sucesivamente hasta llegar a la primer llamada. Al final, quedara el ultimo
+valor de todos en eax para que cuando haga ret se pase el resultado en dicho registro. 
+Al ver el generado en asm por el compilador gcc, observo que la diferencia entre el supuesto y el archivo es que
+cuando va a llamar a los otros fibonacci internos, toma espacio del stack para guardar los valores pero en vez de luego 
+almacenarlos en estos espacios designados, al entender que no hace falta el uso del registro ebx, prefiere almacenarlo
+ahi con un simple mov ebx, eax. Aunque lo habia pedido el espacio y luego con el manejo de punteros, habia hecho:
+mov eax, [esp]
+sub eax, 1
+sub esp, 12
+push eax
+call fibonacci
+mov ebx, eax
+luego regresa los 12 pedidos y los 4 del push eax
+add esp 16
+mov eax, [esp]
+sub eax, 2
+sub esp, 12
+push eax
+add esp, 16
+add eax, ebx
+No agregue que antes de todo pushea ebx y luego lo popea.

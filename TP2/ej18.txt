@@ -1,0 +1,34 @@
+1 - ¿Qué es una system call? ¿Quién la escribió? ¿Dónde se encuentran ubicadas?
+
+Una systemcall o simplemente syscall es un mecanismo de solicitud de los programas al sistema operativo. 
+La escribio la gente encargada de hacer el sistema operativo, dado que su funcion es poder llamar a operaciones 
+especificas del computador desde un programa que corre en el sistema operativo. Por ejemplo la lectura del teclado, 
+escritura de archivos, la salida de estos o la duplicacion de procesos. Estas se encuentran en el kernel o nucleo
+y son gestionadas por el sistema operativo dado que los programas corren sobre este.
+
+
+2 - ¿Cómo se llama a una system call desde assembler de Linux? Muestre con un ejemplo de llamada a read.
+
+para realizar una llamada a un syscall en Linux con intel assembly es similar a llamar a una subrutina:
+primero se cargan los parametros en los registros. Principalmente el parametro en eax es el id de la syscall
+a llamar. Luego el resto dependen de la syscall llamada ya que como funciones distintas requieren parametros distintos
+que van desde punteros a lugares a leer o escribir hasta largo del dato recibido en otro registro como puntero,
+id de la interfaz a utilizar (ej standard input/output). Luego de las asignaciones de parametros se llama a la interrupcion 80h.
+
+Ejemplo:
+mov eax, 3              ;id de la syscall read
+mov ebx, 1              ;id del standard input
+mov ecx, placeholder    ;el puntero donde quiero guardar el texto, que debe tener al menos el tamano que asigno en edx
+mov edx, longitud       ;el largo que quiero tomar para leer
+int 80h                 ;llamado a la interrupcion
+
+Aclaraciones: en section .bss hara falta un placeholder: resb longitud 
+y en section .data un longitud: equ (asignar el valor que quieras leer);
+
+
+3 - ¿Qué es el número de ID?
+
+Si estamos hablando de syscalls, existe una tabla donde se las ordena por numero de id, este es el numero que debe asignarse a eax como
+parametro para la identificacion del syscall a llamar. Es el unico argumento que es obligatorio para toda llamada.
+Si hablamos de procesos, es un numero unico que se le asigna a cada proceso en el sistema operativo para que este pueda asignarles recursos 
+y monitorearlos, haciendo tambien el manejo responsable para que todos puedan suceder.
