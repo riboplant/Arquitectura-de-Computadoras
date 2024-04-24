@@ -1,0 +1,2 @@
+Al pasar parametros en asm, se pushea en orden derecha a izquierda, le paso primero el segundo argumento (char*).
+Al ser los datos string y length consecutivos, el siguiente al 0 del final del string es el largo.

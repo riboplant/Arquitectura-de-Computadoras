@@ -10,3 +10,10 @@ Ej7: 6 formas distintas de declarar arreglos en C y como se traduce a su assembl
 Ej8: llamando a main desde un asm, pasandole los parametros argc, argv. compilando c para que main no tenga _start.
 Ej9: libreria de funciones de C en asm, no terminada
 Ej10: cpuid de asm en C (Tengo que terminarlo)
+Ej11: Funcion, La pila en el cuaderno
+Ej12: Malisimo
+Ej13: Teorico de funciones en C.
+Ej14: Seguimiento de pila en cuaderno.
+Ej16: Checklong function en asm, la llamo de C.
+Ej17: Seguimiento de pila en el cuaderno.
+Ej18: subrutina asm que escribe en pantalla, interesante para intro a tp. Pila en cuaderno.

@@ -1,0 +1,43 @@
+¿Porqué no se debe devolver un arreglo local a una función cómo valor de retorno?
+Los arreglos locales en assembly estan localizados en el stackframe de la funcion, recordando esta estructura del stack:
+cuando una funcion A llama a otra B:
+-----------------------------------
+variables locales de B
+return address de B hacia a
+parametros que A le pasa a B
+-----------------------------------
+variables locales de A
+return address de A hacia el Sistema Operativo
+Parametros del SO para A
+
+entonces una vez que A llama a B si este le devolvio un arreglo local es porque este esta creado en la zona del stack
+de las variables de B por lo que al volver a A este se encuentra en una zona de memoria que es considerada libre.
+En cualquier momento A podria pisarla y se pierden los datos del arreglo, por esto es que se le debe proveer un buffer
+como parametro cuando se llama a una funcion en assembly (desde C en estos casos).
+
+
+¿Porque restan 16 bytes de ESP y no simplemente 4?
+
+En el assembly de 32 bits, los registros de propósito general (como EAX, EBX, ECX, etc.) son de 32 bits, y 
+las direcciones de memoria son direccionadas en unidades de bytes. Cuando se reserva espacio para variables 
+locales en el stack, es común alinear el stack pointer (ESP) a múltiplos de 4 bytes para asegurar un acceso 
+eficiente a los datos. Por lo tanto, incluso si solo se necesita espacio para una variable de 4 bytes, se 
+reserva un múltiplo de 4 bytes para mantener el stack alineado correctamente. En este caso, se restan 16 
+bytes de ESP para asegurar que el stack pointer esté alineado a 4 bytes antes de asignar espacio para la 
+variable local resultado. Esto ayuda a optimizar el acceso a la memoria y asegura la correcta alineación de 
+los datos en la pila.
+
+
+¿Porqué luego, de haber obtenido el resultado de la suma, que queda en el registro
+EAX, se lo guarda en la zona de memoria asignada a la variable resultado y luego se la
+vuelve a leer de ese lugar?
+
+Esta es una convencion con la que trabaja el lenguaje assembly, guarda localmente el valor de la variable en una zona 
+de memoria que habia pedido antes, imitando los dos pasos de la funcion de C: primero declara (pide la memoria), y 
+luego asigna (a esa zona le asigna el valor del resultado), ya que este no sabe cuando termina la funcion y que
+valor debe devolver. Entonces la convencion es pedir memoria restando al stack (declarar una variable con un tamano
+y en una posicion) y luego asignarle el valor (ubicar en esa posicion el valor), en este caso devuelve
+inmediatamente pero generalmente no es asi, entonces luego de guardar podrian cambiar los registros y llamar otras 
+funciones. Luego a la hora de hacer el return, como el valor devuelto es el que esta en EAX, a este registro
+le asigna el valor guardado en la variable local resultado (la posicion del stack que el conoce y asigno).
+Aclaracion es en este caso donde el valor a devolver no es un puntero a array.
