@@ -1,0 +1,64 @@
+Sobre registros e instrucciones, leer la cartilla adjunta.
+
+Stack:
+Es el espacio donde trabaja la funcion. Aqui un dibujo basico.
+
+00000000h
+---------
+
+
+
+---------
+stack frame de printf
+return address a main
+argumento 1 a printf
+---------
+
+---------
+argumento n a printf
+Variables locales de main
+---------
+
+---------
+argc para main
+argv para main
+---------
+
+---------
+FFFFFFFFh
+
+Se puede observar como main no tiene direccion de retorno ni stack frame, pero es porque en realidad se lo llama desde otro progrma que tiene esas consideraciones.
+El resto de las funciones deben preservar los registros ebp, esp, esi, edi, ebx. Estos son los cuales se mueven por la memoria para darle la agilidad al prgrama.
+Tambien es conveniente preservar el resto de los registros, o por lo menos los de uso general.
+Cabe aclarar que esos registros cambian de valores y son operados por las instrucciones. Pero existe tambien un puntero que sigue a las instrucciones, el EIP.
+Este se incrementa cada vez que se realiza una instruccion y la otra forma que tiene de ser alterado es mediante las instrucciones call y jump, que 
+le aumentan o substraen un valor relativo hacia la etiqueta donde requiere la instruccion. Luego al hacer ret, se popea al EIP lo que este alocado en ESP.
+Osea que el call antes de alterar EIP previamente pushea al stack la siguiente direccion donde esta.
+
+La instruccion equ indica que en tiempo de ejecucion se asignara a esa posicion de memoria el valor en la operacion que esta precede.
+De forma similar $ indica el valor a la posicion de memoria donde esta situado. Utilizandose en operaciones para designar longitudes.
+Para iniciar un programa, este debe tener una etiqueta global _start.
+
+En el codigo de assembly podemos observar primeramente 3 sections:
+section .text, aqui se ubica el codigo, las instrucciones.
+section .data, aqui se ubican datos a ser accedidos que son asignados al iniciar la ejecucion.
+section .rodata, que se trata de read only data.
+section .bss, esta disenada para alocar memoria que no esta inicializada, pero que sera necesaria durante la ejecucion.
+
+A la hora de realizar instrucciones del tipo mov, algunas veces se suele necesitar una aclaracion, la cantidad de memoria a copiar en un registro desde el stack o viceversa.
+Podria parecer que uno siempre quiere tomar los 4 bytes pero eso no es tan asi. Dado que por ejemplo al operar con una cadena de chars, prefiero
+tomar estos uno por uno y no un pedazo de cadena. Por esto al hacer la operacion hace falta aclarar el tamano de la siguiente manera.
+mov DWORD eax, esp
+donde como en data dword equivale a los 4 bytes para enteros o punteros (en este caso se suele agregar PTR que es un detalle visual)
+word es para tomar 2 bytes y byte es para 1 byte.
+Recordamos que en el stack se asigna todo en little endian por lo que suele ser mejor derviar ciertas funcionalidades a estas operaciones.
+Son distintas entre todas, dado que al convertirlo a codigo maquina estas tienen distintas conversiones, que varian en el seteo de distintas
+flags para que la operacion se realice de distinta forma.
+
+A la hora de declarar en data, existen distintas operaciones, segun el tamano. En .data:
+db reserva 1 byte.
+dw reserva 2 bytes.
+dd reserva 4 bytes.
+
+En .bss:
+resb, resw, resd.
