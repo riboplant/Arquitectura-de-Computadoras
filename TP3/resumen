@@ -1,0 +1,58 @@
+A continuacion comandos de compilacion y linkedicion.
+compilar asm: nasm -f elf32 archivo.asm
+linkeditar asm: ld -m elf_i386 archivo1.asm archivo2.asm (flag lc para anadir libreria standard de c)
+
+convertir c a asm: gcc -c archivo.c -fno-dwarf2-cfi-asm -fno-exceptiones -S -fno-asynchronous-unwind-tables - nasm=intel
+compilar y linkeditar c sin generar _start: gcc -m32 -no-pie -nostartfiles archivo.c archivoasm.o
+
+Cuando se llama de C a una funcion en asm:
+Archivo.C: unsigned int funcion(tipo1 parametro1, tipon parametron);   (se le puede poner un extern, de todas formas el linkeditor asume que se lo envian externamente de no encontrarlo)
+Archivo.asm: global funcion
+funcion: ----
+
+Lo que sucede es que se pushea desde el parametro n hasta el 1 (en ese orden) al stack en 32 bits, en 64 depende de la cantidad de argumentos, pero en principio se pasan por registros.
+Y luego se llama a call.
+
+Cuando se llama de asm a C:
+Archivo.asm: extern funcion
+Archivo.c: int / void funcion(argumento 1, argumenton){----}
+
+Aqui igual se pushea desde el argumento n hasta el 1 y se hace call.
+
+Observar que el unico valor que puede retornar o recibir assembly es un unsigned int o un puntero. Al retornar desde asm, se suele 
+estilar hacerse en el registro EAX.
+
+GCC:
+Al ser un compilador lee lineas de codigo C y las convierte en asm, para hacerlo tiene sus estandares (ABI).
+Para declarar una variable toma espacio del stack substrayendo a esp y "recordando donde lo hace" una cantidad multiplo de 4 bytes
+Y luego en otro paso siguiente se le asignara un valor en caso de que se haga en el codigo C. Para realizar ciertas acciones utiliza
+instrucciones como xor o and para limpiar flags por ejemplo. Al llamar a una funcion, este sobre el stack frame pushea un valor
+"canary" que es checkeado al salir para detectar alteraciones fuera del espacio designado de la funcion como stack smasher protector.
+Existe la opcion de compilar sin proteccion.
+Al declarar variables globales o estaticas, estas estan en data, inicializadas en 0 y luego son modificadas en caso de ser necesario.
+Utiliza la operacion de loop rep para llenar arrays cuando lo requiere.
+Trata a los arrays, variables y funciones "como objetos" o structs, dado que les asigna un scope el cual revisa cuando son llamadas.
+Por ejemplo cuando a la hora de acceder a una variable global.
+De todas formas sus estandares suelen ser ineficientes pero seguros, pero dado que suele reservar maucha mas memoria de la que 
+realmente necesita, tambien cuenta con una opcion de compilado eficiente que elimina en su mayoria estas operaciones de mas y 
+pide espacio mas justo.
+
+No se va a entrar en mucho detalle de la arquitectura x86_64 pero se resaltaran ciertas caracteristicas.
+Por ejemplo a la hora de llamar a una funcion los argumentos se cargan en los registros, se llama a la funcion y esta copia
+al stack lo alocado en los registros para accedrlos.
+Los argumentos se clasifican segun su tipo:
+Integer - char, short, int, long, long long y punteros.
+SSE - floats, doubles.
+Memory - datos mayores a 8 bytes.
+
+Segun este tipo, se deben pasar en ciertos registros designados en el orden:
+Integer: rdi, rsi, rdx, rcx, r8, r9.
+SSE: xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7.
+Memory: se pasan por stack, en el mismo orden que 32 bits.
+
+Para retornar, tambien depende del tipo:
+Integer: rax, rdx.
+SSE: xmm0, xmm1.
+Memory: Stack.
+
+Registros a preservar: rbp, rsp, rbx, r12, r13, r15.
