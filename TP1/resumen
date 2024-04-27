@@ -1,0 +1,45 @@
+Codigo: Las instrucciones del programa.
+Datos: Variables estaticas y globales que se inician al cargar el programa.
+Heap: Memoria (dinamica) que se reserva y libera en tiempo de ejecucion.
+Pila: Argumentos, variables de la funcion.
+
+Dado que es memoria unicamente utilizada en tiempo de ejecucion no nos vamos a enfocar en el heap.
+Segmento de codigo: Para tratar el code segment se utiliza un registro llamado EIP (Instruction Pointer de 32 bits).
+Segmento de datos: Para este segmento precisamos dos registros: DS y ES dado que uno de estos apuntara a la posicion absoluta 
+en memoria del data segment y el segundo apunta al dato leido en el momento, como posicion relativa desde el otro registo.
+Segmento de pila: El registro ESP apunta a la seccion de la pila que estemos utilizando.
+
+El primer programa en correr es el BIOS , alocado en la ROM, dado que el procesador esta preconfigurado para que al ser encendido 
+EIP apunte a la direccion de la ROM (Lo veremos mas adelante en diseno). Este elige cual es el siguiente programa en correr,
+sus instrucciones incluyen el seteo de ciertos registros como ES? Luego llaman al siguiente programa que es el sistema operativo. 
+Este primeramente reserva una cantidad de memoria arbitraria y luego en esta monta desde el disco a la memoria el kernel y se inicializa
+en este espacio que es privado.
+Luego el es el que llama a otros programas, les asigna memoria (nunca de la suya) en el user space, y si algun programa precisa 
+interactuar con el hardware, como esto solo es posible desde el kernel space, existen las syscalls.
+Las syscalls son un recurso que el sistema operativo brinda a los programas para interactuar con el hardware, esto sucede mediante 
+una llamada que hace el programa desde el user space al sistema operativo en el kernel space, este es el cual realiza la operacion 
+solicitada por el programa. Estas syscalls son predefinidas, solo se pueden realizar acciones que el sistema operativo tiene predefinidas.
+Nosotros lo realizamos mediante la interrupcion int 80h, siendo que estas operaciones estan listadas por un id entero a cargar en EAX, y 
+cada una tiene sus esigencias de argumentos en los otros registros EBX, ECX, EDX. (Funciona igual que DOS con diferencia del numero de interrupcion)
+Hay otras alternativas como llamarlas desde C (depende la arquitectura) con intsrucciones SYSCALL/SYSRET (intel desde pentium) 
+o SYSTENTER/SYSEXIT (amd). La ultima manera es mediante vsyscall (Virtual Syscall) o VDSO (Virtual Dinamic Shared Object) en 
+linux, estas son paginas de memoria que se crean en el user space con el fin de acelerar tiempos.
+Se pueden observar las syscalls a realizar por un programa aplicando el comando strace al binario.
+
+Se toma el programa en C, se lo preprocesa expandiendo sus macros (las mas importantes son include, define), se lo convierte 
+a un codigo assembly (.S) con sintaxis Intel o AT&T. Luego el compilador GNU de assembly genera el codigo objeto. Por ultimo el 
+linkeditor crea el ejecutable.
+Los objetos pueden tener distintos tipos, estos datos se pueden obtener a partir del header que este presenta. 
+Con el comando file se puede extraer este header. Para extraer los posibles strings que un archivo tiene existe un comando 
+con nombre strings que busca a apartir de 4 bytes cuyos valores esten entre los ASCII. Con el ejecutable se puede acceder 
+al codigo binario mediante el Bless Hex Editor. En este se pueden observar los strings y las operaciones en codigo maquina. 
+Se puede editar el ejecutable, tanto la seccion de data como la de codigo. Al hacer esto hay que tener ciertas precauciones 
+dado que los ejecutables poseen una funcion checksum, la cual analiza que la cantidad de bytes que el ejecutable tiene no sea alterada.
+
+Caracteristicas de la arquitectura 80386:
+Multitarea: Tiene estacio individual y compartido para las tareas.
+Multiusuario: Mas de un usuario tiene acceso al CPU.
+Tiempo Compartido: El SO asigna un time slot a cada tarea.
+Tiempo Real: La conmutacion de tareas viene dada por acontecimientos externos.
+Sistema de Proteccion: Minimo dos niveles, user y supervisor.
+Memoria Virtual.
