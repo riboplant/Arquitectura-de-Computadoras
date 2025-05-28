@@ -5,13 +5,15 @@ Pila: Argumentos, variables de la funcion.
 
 Dado que es memoria unicamente utilizada en tiempo de ejecucion no nos vamos a enfocar en el heap.
 Segmento de codigo: Para tratar el code segment se utiliza un registro llamado EIP (Instruction Pointer de 32 bits).
-Segmento de datos: Para este segmento precisamos dos registros: DS y ES dado que uno de estos apuntara a la posicion absoluta 
-en memoria del data segment y el segundo apunta al dato leido en el momento, como posicion relativa desde el otro registo.
-Segmento de pila: El registro ESP apunta a la seccion de la pila que estemos utilizando.
+Segmento de datos: Para este segmento precisamos varios registros: Estos los utilizaremos de a pares 
+dado que uno de estos apuntara a la posicion absoluta (ademas existen varias secciones dentro del segmento)
+en memoria de la seccion en el data segment y el segundo apunta al dato leido en el momento, 
+como posicion relativa desde el otro registo.
+Segmento de pila: La pila de forma similar tiene un puntero absoluto SS que indica donde "empieza", luego ESP y EBP son posiciones relativas.
 
 El primer programa en correr es el BIOS , alocado en la ROM, dado que el procesador esta preconfigurado para que al ser encendido 
 EIP apunte a la direccion de la ROM (Lo veremos mas adelante en diseno). Este elige cual es el siguiente programa en correr,
-sus instrucciones incluyen el seteo de ciertos registros como ES? Luego llaman al siguiente programa que es el sistema operativo. 
+Luego llaman al siguiente programa que es el sistema operativo. 
 Este primeramente reserva una cantidad de memoria arbitraria y luego en esta monta desde el disco a la memoria el kernel y se inicializa
 en este espacio que es privado.
 Luego el es el que llama a otros programas, les asigna memoria (nunca de la suya) en el user space, y si algun programa precisa 
@@ -20,7 +22,7 @@ Las syscalls son un recurso que el sistema operativo brinda a los programas para
 una llamada que hace el programa desde el user space al sistema operativo en el kernel space, este es el cual realiza la operacion 
 solicitada por el programa. Estas syscalls son predefinidas, solo se pueden realizar acciones que el sistema operativo tiene predefinidas.
 Nosotros lo realizamos mediante la interrupcion int 80h, siendo que estas operaciones estan listadas por un id entero a cargar en EAX, y 
-cada una tiene sus esigencias de argumentos en los otros registros EBX, ECX, EDX. (Funciona igual que DOS con diferencia del numero de interrupcion)
+cada una tiene sus exigencias de argumentos en los otros registros EBX, ECX, EDX. (Funciona igual que DOS con diferencia del numero de interrupcion)
 Hay otras alternativas como llamarlas desde C (depende la arquitectura) con intsrucciones SYSCALL/SYSRET (intel desde pentium) 
 o SYSTENTER/SYSEXIT (amd). La ultima manera es mediante vsyscall (Virtual Syscall) o VDSO (Virtual Dinamic Shared Object) en 
 linux, estas son paginas de memoria que se crean en el user space con el fin de acelerar tiempos.

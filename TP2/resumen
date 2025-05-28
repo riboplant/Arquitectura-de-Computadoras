@@ -39,10 +39,10 @@ La instruccion equ indica que en tiempo de ejecucion se asignara a esa posicion 
 De forma similar $ indica el valor a la posicion de memoria donde esta situado. Utilizandose en operaciones para designar longitudes.
 Para iniciar un programa, este debe tener una etiqueta global _start.
 
-En el codigo de assembly podemos observar primeramente 3 sections:
-section .text, aqui se ubica el codigo, las instrucciones.
-section .data, aqui se ubican datos a ser accedidos que son asignados al iniciar la ejecucion.
-section .rodata, que se trata de read only data.
+En el codigo de assembly podemos observar primeramente 4 sections:
+section .text, aqui se ubica el codigo, las instrucciones. (En code segment)
+section .data, aqui se ubican datos a ser accedidos que son asignados al iniciar la ejecucion. (En data segment)
+section .rodata, que se trata de read only data. (En data segment)
 section .bss, esta disenada para alocar memoria que no esta inicializada, pero que sera necesaria durante la ejecucion.
 
 A la hora de realizar instrucciones del tipo mov, algunas veces se suele necesitar una aclaracion, la cantidad de memoria a copiar en un registro desde el stack o viceversa.
