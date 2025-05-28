@@ -32,6 +32,7 @@ los datos en la pila.
 EAX, se lo guarda en la zona de memoria asignada a la variable resultado y luego se la
 vuelve a leer de ese lugar?
 
+Tiene en cuenta que ese valor de memoria es local para la funcion y al retornar, este ya no sera un valor seguro.
 Esta es una convencion con la que trabaja el lenguaje assembly, guarda localmente el valor de la variable en una zona 
 de memoria que habia pedido antes, imitando los dos pasos de la funcion de C: primero declara (pide la memoria), y 
 luego asigna (a esa zona le asigna el valor del resultado), ya que este no sabe cuando termina la funcion y que
@@ -40,4 +41,4 @@ y en una posicion) y luego asignarle el valor (ubicar en esa posicion el valor),
 inmediatamente pero generalmente no es asi, entonces luego de guardar podrian cambiar los registros y llamar otras 
 funciones. Luego a la hora de hacer el return, como el valor devuelto es el que esta en EAX, a este registro
 le asigna el valor guardado en la variable local resultado (la posicion del stack que el conoce y asigno).
-Aclaracion es en este caso donde el valor a devolver no es un puntero a array.
+Aclaracion es en este caso donde el valor a devolver no es un puntero a array. 
